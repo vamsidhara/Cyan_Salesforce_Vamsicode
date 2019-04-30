@@ -1,0 +1,21 @@
+//This Trigger is On Project Obj To check the Loan Amount Field and Fire the class logic
+//to convert numbers into words on CurrencyInWords Feild. 
+
+trigger ConvertCurrencyToWords on Project__c (before insert, before update, before delete, after insert, after update, after delete, after undelete) {
+   if (Trigger.isBefore) {
+      if (Trigger.isInsert || Trigger.isUpdate ) {
+          for (Project__c c : Trigger.new) {
+             if (c.LoanAmount__c != null && c.LoanAmount__c >= 0) {
+                if(Trigger.isInsert || (Trigger.isUpdate && c.LoanAmount__c != Trigger.oldMap.get(c.Id).LoanAmount__c )) {
+                   Decimal n = c.LoanAmount__c;
+                   CurrencyToWords cw = new CurrencyToWords();
+                   string amo = cw.CurrencyToWordsFormat(n);
+                   c.CurrencyInWords__c = amo;
+                }
+             } else {
+                  c.CurrencyInWords__c = null;
+                }
+          }
+       }
+    }
+}
